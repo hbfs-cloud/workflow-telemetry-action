@@ -81106,14 +81106,16 @@ const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
 function proxyConfig() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         let proxyConfig = {};
         if (process.env.https_proxy) {
+            let port = url.parse(process.env.https_proxy).port || '80';
             proxyConfig = {
                 proxy: {
                     protocol: url.parse(process.env.https_proxy).protocol,
-                    host: url.parse(process.env.https_proxy).host,
-                    port: parseInt(url.parse(process.env.https_proxy).port || '80', 10)
+                    host: (_a = url.parse(process.env.https_proxy).host) === null || _a === void 0 ? void 0 : _a.replace(':' + port, ''),
+                    port: parseInt(port, 10)
                 }
             };
         }
