@@ -81101,25 +81101,18 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const core = __importStar(__nccwpck_require__(2186));
 const logger = __importStar(__nccwpck_require__(4636));
-const url = __importStar(__nccwpck_require__(7310));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
 function proxyConfig() {
-    var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         let proxyConfig = {};
         if (process.env.https_proxy) {
-            let port = url.parse(process.env.https_proxy).port || '80';
             proxyConfig = {
-                proxy: {
-                    protocol: (_a = url.parse(process.env.https_proxy).protocol) === null || _a === void 0 ? void 0 : _a.replace(':', ''),
-                    host: (_b = url.parse(process.env.https_proxy).host) === null || _b === void 0 ? void 0 : _b.replace(':' + port, ''),
-                    port: parseInt(port, 10)
-                }
+                proxy: false
             };
         }
-        logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`);
+        logger.debug(`Use proxyConfig=${JSON.stringify(proxyConfig)}`);
         return proxyConfig;
     });
 }
