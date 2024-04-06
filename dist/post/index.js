@@ -80541,6 +80541,17 @@ function reportAll(currentJob, content) {
         if ('true' === jobSummary) {
             core.summary.addRaw(postContent);
             yield core.summary.write();
+            // await octokit.rest.checks.create({
+            //   owner: repo.owner,
+            //   repo: repo.repo,
+            //   name: 'Telemetry',
+            //   head_sha: sha,
+            //   output: {
+            //     title: 'Telemetry',
+            //     summary: 'Telemetry',
+            //     text: postContent
+            //   }
+            // })
         }
         const commentOnPR = core.getInput('comment_on_pr');
         if (pull_request && 'true' === commentOnPR) {
@@ -80548,17 +80559,6 @@ function reportAll(currentJob, content) {
                 logger.debug(`Found Pull Request: ${JSON.stringify(pull_request)}`);
             }
             yield octokit.rest.issues.createComment(Object.assign(Object.assign({}, github.context.repo), { issue_number: Number((_a = github.context.payload.pull_request) === null || _a === void 0 ? void 0 : _a.number), body: postContent }));
-            yield octokit.rest.checks.create({
-                owner: repo.owner,
-                repo: repo.repo,
-                name: 'Telemetry',
-                head_sha: sha,
-                output: {
-                    title: 'Telemetry',
-                    summary: 'Telemetry',
-                    text: postContent
-                }
-            });
         }
         else {
             logger.debug(`Couldn't find Pull Request`);

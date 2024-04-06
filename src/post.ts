@@ -93,17 +93,17 @@ async function reportAll(
   if ('true' === jobSummary) {
     core.summary.addRaw(postContent)
     await core.summary.write()
-    await octokit.rest.checks.create({
-      owner: repo.owner,
-      repo: repo.repo,
-      name: 'Telemetry',
-      head_sha: sha,
-      output: {
-        title: 'Telemetry',
-        summary: 'Telemetry',
-        text: postContent
-      }
-    })
+    // await octokit.rest.checks.create({
+    //   owner: repo.owner,
+    //   repo: repo.repo,
+    //   name: 'Telemetry',
+    //   head_sha: sha,
+    //   output: {
+    //     title: 'Telemetry',
+    //     summary: 'Telemetry',
+    //     text: postContent
+    //   }
+    // })
   }
 
   const commentOnPR: string = core.getInput('comment_on_pr')
