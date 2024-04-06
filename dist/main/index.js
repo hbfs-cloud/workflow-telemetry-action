@@ -3936,7 +3936,7 @@ RedirectableRequest.prototype._processResponse = function (response) {
      redirectUrl.protocol !== "https:" ||
      redirectUrl.host !== currentHost &&
      !isSubdomain(redirectUrl.host, currentHost)) {
-    removeMatchingHeaders(/^(?:authorization|cookie)$/i, this._options.headers);
+    removeMatchingHeaders(/^(?:(?:proxy-)?authorization|cookie)$/i, this._options.headers);
   }
 
   // Evaluate the beforeRedirect callback
@@ -44924,36 +44924,9 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const core = __importStar(__nccwpck_require__(2186));
 const logger = __importStar(__nccwpck_require__(4636));
-const url = __importStar(__nccwpck_require__(7310));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
-const PROXY = process.env.http_proxy ||
-    process.env.HTTP_PROXY ||
-    process.env.https_proxy ||
-    process.env.HTTPS_PROXY;
-function proxyConfig() {
-    var _a, _b;
-    return __awaiter(this, void 0, void 0, function* () {
-        let proxyConfig = {};
-        if (PROXY) {
-            let port = url.parse(PROXY).port || '80';
-            proxyConfig = {
-                proxy: {
-                    protocol: (_a = url.parse(PROXY).protocol) === null || _a === void 0 ? void 0 : _a.replace(':', ''),
-                    host: (_b = url.parse(PROXY).host) === null || _b === void 0 ? void 0 : _b.replace(':' + port, ''),
-                    port: parseInt(port, 10)
-                }
-            };
-            delete process.env['http_proxy'];
-            delete process.env['HTTP_PROXY'];
-            delete process.env['https_proxy'];
-            delete process.env['HTTPS_PROXY'];
-        }
-        logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`);
-        return proxyConfig;
-    });
-}
 function triggerStatCollect() {
     return __awaiter(this, void 0, void 0, function* () {
         logger.debug('Triggering stat collect ...');
@@ -45241,7 +45214,7 @@ function getLineGraph(options) {
         };
         let response = null;
         try {
-            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/line/time', payload, yield proxyConfig());
+            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/line/time', payload);
         }
         catch (error) {
             logger.error(error);
@@ -45270,7 +45243,7 @@ function getStackedAreaGraph(options) {
         };
         let response = null;
         try {
-            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/stacked-area/time', payload, yield proxyConfig());
+            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/stacked-area/time', payload);
         }
         catch (error) {
             logger.error(error);
@@ -47370,7 +47343,7 @@ module.exports = parseParams
 /***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 "use strict";
-// Axios v1.6.7 Copyright (c) 2024 Matt Zabriskie and contributors
+// Axios v1.6.8 Copyright (c) 2024 Matt Zabriskie and contributors
 
 
 const FormData$1 = __nccwpck_require__(4334);
@@ -47382,7 +47355,7 @@ const util = __nccwpck_require__(3837);
 const followRedirects = __nccwpck_require__(7707);
 const zlib = __nccwpck_require__(9796);
 const stream = __nccwpck_require__(2781);
-const EventEmitter = __nccwpck_require__(2361);
+const events = __nccwpck_require__(2361);
 
 function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
 
@@ -47394,7 +47367,6 @@ const util__default = /*#__PURE__*/_interopDefaultLegacy(util);
 const followRedirects__default = /*#__PURE__*/_interopDefaultLegacy(followRedirects);
 const zlib__default = /*#__PURE__*/_interopDefaultLegacy(zlib);
 const stream__default = /*#__PURE__*/_interopDefaultLegacy(stream);
-const EventEmitter__default = /*#__PURE__*/_interopDefaultLegacy(EventEmitter);
 
 function bind(fn, thisArg) {
   return function wrap() {
@@ -49391,7 +49363,7 @@ function buildFullPath(baseURL, requestedURL) {
   return requestedURL;
 }
 
-const VERSION = "1.6.7";
+const VERSION = "1.6.8";
 
 function parseProtocol(url) {
   const match = /^([-+\w]{1,25})(:?\/\/|:)/.exec(url);
@@ -50034,7 +50006,7 @@ const httpAdapter = isHttpAdapterSupported && function httpAdapter(config) {
     }
 
     // temporary internal emitter until the AxiosRequest class will be implemented
-    const emitter = new EventEmitter__default["default"]();
+    const emitter = new events.EventEmitter();
 
     const onFinished = () => {
       if (config.cancelToken) {
@@ -51024,7 +50996,7 @@ function dispatchRequest(config) {
   });
 }
 
-const headersToObject = (thing) => thing instanceof AxiosHeaders$1 ? thing.toJSON() : thing;
+const headersToObject = (thing) => thing instanceof AxiosHeaders$1 ? { ...thing } : thing;
 
 /**
  * Config-specific merge-function which creates a new config-object

@@ -30,32 +30,6 @@ const STAT_SERVER_PORT = 7777
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
 
-const PROXY =
-  process.env.http_proxy ||
-  process.env.HTTP_PROXY ||
-  process.env.https_proxy ||
-  process.env.HTTPS_PROXY
-
-async function proxyConfig(): Promise<AxiosRequestConfig> {
-  let proxyConfig = {}
-  if (PROXY) {
-    let port = url.parse(PROXY).port || '80'
-    proxyConfig = {
-      proxy: {
-        protocol: url.parse(PROXY).protocol?.replace(':', ''),
-        host: url.parse(PROXY).host?.replace(':' + port, ''),
-        port: parseInt(port, 10)
-      }
-    }
-    delete process.env['http_proxy']
-    delete process.env['HTTP_PROXY']
-    delete process.env['https_proxy']
-    delete process.env['HTTPS_PROXY']
-  }
-  logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`)
-  return proxyConfig
-}
-
 async function triggerStatCollect(): Promise<void> {
   logger.debug('Triggering stat collect ...')
   const response = await axios.post(
@@ -406,8 +380,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
   try {
     response = await axios.put(
       'https://api.globadge.com/v1/chartgen/line/time',
-      payload,
-      await proxyConfig()
+      payload
     )
   } catch (error: any) {
     logger.error(error)
@@ -441,8 +414,7 @@ async function getStackedAreaGraph(
   try {
     response = await axios.put(
       'https://api.globadge.com/v1/chartgen/stacked-area/time',
-      payload,
-      await proxyConfig()
+      payload
     )
   } catch (error: any) {
     logger.error(error)
