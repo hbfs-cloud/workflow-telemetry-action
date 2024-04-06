@@ -34,7 +34,7 @@ async function proxyConfig(): Promise<AxiosRequestConfig> {
     let port = url.parse(process.env.https_proxy).port || '80'
     proxyConfig = {
       proxy: {
-        protocol: url.parse(process.env.https_proxy).protocol,
+        protocol: url.parse(process.env.https_proxy).protocol?.replace(':', ''),
         host: url.parse(process.env.https_proxy).host?.replace(':' + port, ''),
         port: parseInt(port, 10)
       }
