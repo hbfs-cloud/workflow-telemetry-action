@@ -6,10 +6,18 @@ on:
       - "**"
   workflow_dispatch:
 
+permissions:
+  actions: read
+  pull-requests: write
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
+      - uses: hbfs-cloud/workflow-telemetry-action@master
+        with:
+          metric_frequency: 1
+          proc_trace_sys_enable: true
+          comment_on_pr: false
       - uses: actions/checkout@v4
       - name: Use Node.js
         uses: actions/setup-node@v4
