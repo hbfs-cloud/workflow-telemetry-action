@@ -16,6 +16,7 @@ const proxy = process.env.https_proxy || process.env.HTTPS_PROXY
 if (proxy) {
   agent = new HttpsProxyAgent(proxy)
 }
+logger.info(`Use proxy: ${proxy}`)
 const octokit: Octokit = new Octokit({
   request: { agent: agent }
 })
@@ -62,7 +63,8 @@ async function getCurrentJob(): Promise<WorkflowJobType | null> {
   } catch (error: any) {
     logger.error(
       `Unable to get current workflow job info. ` +
-        `Please sure that your workflow have "actions:read" permission!`
+        `Please sure that your workflow have "actions:read" permission!` +
+        error
     )
   }
   return null

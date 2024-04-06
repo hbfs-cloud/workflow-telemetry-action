@@ -54796,6 +54796,7 @@ const proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
 if (proxy) {
     agent = new https_proxy_agent_1.HttpsProxyAgent(proxy);
 }
+logger.info(`Use proxy: ${proxy}`);
 const octokit = new action_1.Octokit({
     request: { agent: agent }
 });
@@ -54839,7 +54840,8 @@ function getCurrentJob() {
         }
         catch (error) {
             logger.error(`Unable to get current workflow job info. ` +
-                `Please sure that your workflow have "actions:read" permission!`);
+                `Please sure that your workflow have "actions:read" permission!` +
+                error);
         }
         return null;
     });
