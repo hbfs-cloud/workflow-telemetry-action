@@ -22,6 +22,7 @@ import {
 import * as logger from './logger'
 import { log } from 'console'
 import * as url from 'url'
+import { HttpsProxyAgent } from 'https-proxy-agent'
 
 const STAT_SERVER_PORT = 7777
 
@@ -31,8 +32,11 @@ const WHITE = '#FFFFFF'
 async function proxyConfig(): Promise<AxiosRequestConfig> {
   let proxyConfig = {}
   if (process.env.https_proxy) {
+    const agent = new HttpsProxyAgent(process.env.https_proxy)
     proxyConfig = {
-      proxy: false
+      proxy: false,
+      httpAgent: agent,
+      httpsAgent: agent
     }
   }
   logger.debug(`Use proxyConfig=${JSON.stringify(proxyConfig)}`)
