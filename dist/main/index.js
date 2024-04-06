@@ -44928,23 +44928,24 @@ const url = __importStar(__nccwpck_require__(7310));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
+const PROXY = process.env.https_proxy;
 function proxyConfig() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
         let proxyConfig = {};
-        if (process.env.https_proxy) {
-            let port = url.parse(process.env.https_proxy).port || '80';
+        if (PROXY) {
+            let port = url.parse(PROXY).port || '80';
             proxyConfig = {
                 proxy: {
-                    protocol: (_a = url.parse(process.env.https_proxy).protocol) === null || _a === void 0 ? void 0 : _a.replace(':', ''),
-                    host: (_b = url.parse(process.env.https_proxy).host) === null || _b === void 0 ? void 0 : _b.replace(':' + port, ''),
+                    protocol: (_a = url.parse(PROXY).protocol) === null || _a === void 0 ? void 0 : _a.replace(':', ''),
+                    host: (_b = url.parse(PROXY).host) === null || _b === void 0 ? void 0 : _b.replace(':' + port, ''),
                     port: parseInt(port, 10)
                 }
             };
-            delete process.env.https_proxy;
-            delete process.env.http_proxy;
-            delete process.env.HTTPS_PROXY;
-            delete process.env.HTTP_PROXY;
+            delete process.env['http_proxy'];
+            delete process.env['HTTP_PROXY'];
+            delete process.env['https_proxy'];
+            delete process.env['HTTPS_PROXY'];
         }
         logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`);
         return proxyConfig;

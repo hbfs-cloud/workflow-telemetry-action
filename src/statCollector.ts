@@ -30,21 +30,23 @@ const STAT_SERVER_PORT = 7777
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
 
+const PROXY = process.env.https_proxy
+
 async function proxyConfig(): Promise<AxiosRequestConfig> {
   let proxyConfig = {}
-  if (process.env.https_proxy) {
-    let port = url.parse(process.env.https_proxy).port || '80'
+  if (PROXY) {
+    let port = url.parse(PROXY).port || '80'
     proxyConfig = {
       proxy: {
-        protocol: url.parse(process.env.https_proxy).protocol?.replace(':', ''),
-        host: url.parse(process.env.https_proxy).host?.replace(':' + port, ''),
+        protocol: url.parse(PROXY).protocol?.replace(':', ''),
+        host: url.parse(PROXY).host?.replace(':' + port, ''),
         port: parseInt(port, 10)
       }
     }
-    delete process.env.https_proxy
-    delete process.env.http_proxy
-    delete process.env.HTTPS_PROXY
-    delete process.env.HTTP_PROXY
+    delete process.env['http_proxy']
+    delete process.env['HTTP_PROXY']
+    delete process.env['https_proxy']
+    delete process.env['HTTPS_PROXY']
   }
   logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`)
   return proxyConfig
