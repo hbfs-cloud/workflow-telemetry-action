@@ -81117,7 +81117,7 @@ function proxyConfig() {
                 }
             };
         }
-        logger.info(`Use proxyConfig=${proxyConfig}`);
+        logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`);
         return proxyConfig;
     });
 }
