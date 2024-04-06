@@ -28310,15 +28310,21 @@ const url = __importStar(__nccwpck_require__(7310));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
-let PROXY_CONFIG = {};
-if (process.env.https_proxy) {
-    PROXY_CONFIG = {
-        proxy: {
-            protocol: url.parse(JSON.stringify(process.env.https_proxy)).protocol,
-            host: url.parse(JSON.stringify(process.env.https_proxy)).host,
-            port: url.parse(JSON.stringify(process.env.https_proxy)).port
+function proxyConfig() {
+    return __awaiter(this, void 0, void 0, function* () {
+        let proxyConfig = {};
+        if (process.env.https_proxy) {
+            proxyConfig = {
+                proxy: {
+                    protocol: url.parse(process.env.https_proxy).protocol,
+                    host: url.parse(process.env.https_proxy).host,
+                    port: parseInt(url.parse(process.env.https_proxy).port || '80', 10)
+                }
+            };
         }
-    };
+        logger.info(`Use proxyConfig=${proxyConfig}`);
+        return proxyConfig;
+    });
 }
 function triggerStatCollect() {
     return __awaiter(this, void 0, void 0, function* () {
@@ -28607,7 +28613,7 @@ function getLineGraph(options) {
         };
         let response = null;
         try {
-            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/line/time', payload, PROXY_CONFIG);
+            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/line/time', payload, yield proxyConfig());
         }
         catch (error) {
             logger.error(error);
@@ -28636,7 +28642,7 @@ function getStackedAreaGraph(options) {
         };
         let response = null;
         try {
-            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/stacked-area/time', payload, PROXY_CONFIG);
+            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/stacked-area/time', payload, yield proxyConfig());
         }
         catch (error) {
             logger.error(error);

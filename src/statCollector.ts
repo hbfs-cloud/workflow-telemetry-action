@@ -1,6 +1,6 @@
 import { ChildProcess, spawn } from 'child_process'
 import path from 'path'
-import axios from 'axios'
+import axios, { AxiosRequestConfig } from 'axios'
 import * as core from '@actions/core'
 import {
   CPUStats,
@@ -28,15 +28,19 @@ const STAT_SERVER_PORT = 7777
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
 
-let PROXY_CONFIG = {}
-if (process.env.https_proxy) {
-  PROXY_CONFIG = {
-    proxy: {
-      protocol: url.parse(JSON.stringify(process.env.https_proxy)).protocol,
-      host: url.parse(JSON.stringify(process.env.https_proxy)).host,
-      port: url.parse(JSON.stringify(process.env.https_proxy)).port
+async function proxyConfig(): Promise<AxiosRequestConfig> {
+  let proxyConfig = {}
+  if (process.env.https_proxy) {
+    proxyConfig = {
+      proxy: {
+        protocol: url.parse(process.env.https_proxy).protocol,
+        host: url.parse(process.env.https_proxy).host,
+        port: parseInt(url.parse(process.env.https_proxy).port || '80', 10)
+      }
     }
   }
+  logger.info(`Use proxyConfig=${proxyConfig}`)
+  return proxyConfig
 }
 
 async function triggerStatCollect(): Promise<void> {
@@ -390,7 +394,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
     response = await axios.put(
       'https://api.globadge.com/v1/chartgen/line/time',
       payload,
-      PROXY_CONFIG
+      await proxyConfig()
     )
   } catch (error: any) {
     logger.error(error)
@@ -425,7 +429,7 @@ async function getStackedAreaGraph(
     response = await axios.put(
       'https://api.globadge.com/v1/chartgen/stacked-area/time',
       payload,
-      PROXY_CONFIG
+      await proxyConfig()
     )
   } catch (error: any) {
     logger.error(error)
