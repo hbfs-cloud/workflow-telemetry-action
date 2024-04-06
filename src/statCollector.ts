@@ -32,20 +32,21 @@ const WHITE = '#FFFFFF'
 
 async function proxyConfig(): Promise<AxiosRequestConfig> {
   let proxyConfig = {}
-  let httpAgent = undefined
-  let httpsAgent = undefined
-  if (process.env.http_proxy) {
-    httpAgent = new HttpProxyAgent(process.env.http_proxy)
-  }
   if (process.env.https_proxy) {
-    httpsAgent = new HttpsProxyAgent(process.env.https_proxy)
+    let port = url.parse(process.env.https_proxy).port || '80'
+    proxyConfig = {
+      proxy: {
+        protocol: url.parse(process.env.https_proxy).protocol?.replace(':', ''),
+        host: url.parse(process.env.https_proxy).host?.replace(':' + port, ''),
+        port: parseInt(port, 10)
+      }
+    }
+    delete process.env.https_proxy
+    delete process.env.http_proxy
+    delete process.env.HTTPS_PROXY
+    delete process.env.HTTP_PROXY
   }
-  proxyConfig = {
-    proxy: false,
-    httpAgent: httpAgent,
-    httpsAgent: httpsAgent
-  }
-  logger.debug(`Use proxyConfig=${JSON.stringify(proxyConfig)}`)
+  logger.info(`Use proxyConfig=${JSON.stringify(proxyConfig)}`)
   return proxyConfig
 }
 
