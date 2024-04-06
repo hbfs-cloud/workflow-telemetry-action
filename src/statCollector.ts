@@ -30,7 +30,11 @@ const STAT_SERVER_PORT = 7777
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
 
-const PROXY = process.env.https_proxy
+const PROXY =
+  process.env.http_proxy ||
+  process.env.HTTP_PROXY ||
+  process.env.https_proxy ||
+  process.env.HTTPS_PROXY
 
 async function proxyConfig(): Promise<AxiosRequestConfig> {
   let proxyConfig = {}

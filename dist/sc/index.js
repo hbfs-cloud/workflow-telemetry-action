@@ -28310,7 +28310,10 @@ const url = __importStar(__nccwpck_require__(7310));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
-const PROXY = process.env.https_proxy;
+const PROXY = process.env.http_proxy ||
+    process.env.HTTP_PROXY ||
+    process.env.https_proxy ||
+    process.env.HTTPS_PROXY;
 function proxyConfig() {
     var _a, _b;
     return __awaiter(this, void 0, void 0, function* () {
