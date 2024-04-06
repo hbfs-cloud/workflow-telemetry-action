@@ -23,7 +23,7 @@ import * as logger from './logger'
 import { log } from 'console'
 import * as url from 'url'
 import { HttpsProxyAgent } from 'https-proxy-agent'
-import import_undici, { ProxyAgent } from 'undici'
+import { HttpProxyAgent } from 'http-proxy-agent'
 
 const STAT_SERVER_PORT = 7777
 
@@ -32,25 +32,18 @@ const WHITE = '#FFFFFF'
 
 async function proxyConfig(): Promise<AxiosRequestConfig> {
   let proxyConfig = {}
+  let httpAgent = undefined
+  let httpsAgent = undefined
+  if (process.env.http_proxy) {
+    httpAgent = new HttpProxyAgent(process.env.http_proxy)
+  }
   if (process.env.https_proxy) {
-    function getProxyAgent() {
-      const httpProxy = process.env['HTTP_PROXY'] || process.env['http_proxy']
-      if (httpProxy) {
-        return new ProxyAgent(httpProxy)
-      }
-      const httpsProxy =
-        process.env['HTTPS_PROXY'] || process.env['https_proxy']
-      if (httpsProxy) {
-        return new ProxyAgent(httpsProxy)
-      }
-      return void 0
-    }
-    const agent = getProxyAgent()
-    proxyConfig = {
-      proxy: false,
-      httpAgent: agent,
-      httpsAgent: agent
-    }
+    httpsAgent = new HttpsProxyAgent(process.env.https_proxy)
+  }
+  proxyConfig = {
+    proxy: false,
+    httpAgent: httpAgent,
+    httpsAgent: httpsAgent
   }
   logger.debug(`Use proxyConfig=${JSON.stringify(proxyConfig)}`)
   return proxyConfig
