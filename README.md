@@ -1,5 +1,7 @@
 # workflow-telemetry-action
 
+Note: Fork of https://github.com/catchpoint/workflow-telemetry-action with Proxy support and result as Run check
+
 A GitHub Action to track and monitor the 
 - workflow runs, jobs and steps
 - resource metrics 
@@ -53,12 +55,13 @@ To use the action, add the following step before the steps you want to track.
 ```yaml
 permissions:
   pull-requests: write
+  actions: read
 jobs:
   workflow-telemetry-action:
     runs-on: ubuntu-latest
     steps:
       - name: Collect Workflow Telemetry
-        uses: catchpoint/workflow-telemetry-action@v2
+        uses: hbfs-cloud/workflow-telemetry-action@master
 ```
 
 ## Configuration

@@ -21,11 +21,23 @@ import {
 } from './interfaces'
 import * as logger from './logger'
 import { log } from 'console'
+import * as url from 'url'
 
 const STAT_SERVER_PORT = 7777
 
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
+
+let PROXY_CONFIG = {}
+if (process.env.https_proxy) {
+  PROXY_CONFIG = {
+    proxy: {
+      protocol: url.parse(JSON.stringify(process.env.https_proxy)).protocol,
+      host: url.parse(JSON.stringify(process.env.https_proxy)).host,
+      port: url.parse(JSON.stringify(process.env.https_proxy)).port
+    }
+  }
+}
 
 async function triggerStatCollect(): Promise<void> {
   logger.debug('Triggering stat collect ...')
@@ -377,7 +389,8 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
   try {
     response = await axios.put(
       'https://api.globadge.com/v1/chartgen/line/time',
-      payload
+      payload,
+      PROXY_CONFIG
     )
   } catch (error: any) {
     logger.error(error)
@@ -411,7 +424,8 @@ async function getStackedAreaGraph(
   try {
     response = await axios.put(
       'https://api.globadge.com/v1/chartgen/stacked-area/time',
-      payload
+      payload,
+      PROXY_CONFIG
     )
   } catch (error: any) {
     logger.error(error)

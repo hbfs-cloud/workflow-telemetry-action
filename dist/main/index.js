@@ -44924,9 +44924,20 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const core = __importStar(__nccwpck_require__(2186));
 const logger = __importStar(__nccwpck_require__(4636));
+const url = __importStar(__nccwpck_require__(7310));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
+let PROXY_CONFIG = {};
+if (process.env.https_proxy) {
+    PROXY_CONFIG = {
+        proxy: {
+            protocol: url.parse(JSON.stringify(process.env.https_proxy)).protocol,
+            host: url.parse(JSON.stringify(process.env.https_proxy)).host,
+            port: url.parse(JSON.stringify(process.env.https_proxy)).port
+        }
+    };
+}
 function triggerStatCollect() {
     return __awaiter(this, void 0, void 0, function* () {
         logger.debug('Triggering stat collect ...');
@@ -45214,7 +45225,7 @@ function getLineGraph(options) {
         };
         let response = null;
         try {
-            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/line/time', payload);
+            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/line/time', payload, PROXY_CONFIG);
         }
         catch (error) {
             logger.error(error);
@@ -45243,7 +45254,7 @@ function getStackedAreaGraph(options) {
         };
         let response = null;
         try {
-            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/stacked-area/time', payload);
+            response = yield axios_1.default.put('https://api.globadge.com/v1/chartgen/stacked-area/time', payload, PROXY_CONFIG);
         }
         catch (error) {
             logger.error(error);
