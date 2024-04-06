@@ -6,20 +6,12 @@ import * as statCollector from './statCollector'
 import * as processTracer from './processTracer'
 import * as logger from './logger'
 import { WorkflowJobType } from './interfaces'
-import { HttpsProxyAgent } from 'https-proxy-agent'
 
 const { pull_request } = github.context.payload
 const { workflow, job, repo, runId, sha } = github.context
 const PAGE_SIZE = 100
-let agent = {}
-const proxy = process.env.https_proxy || process.env.HTTPS_PROXY
-if (proxy) {
-  agent = new HttpsProxyAgent(proxy)
-}
-logger.info(`Use proxy: ${proxy}`)
-const octokit: Octokit = new Octokit({
-  request: { agent: agent }
-})
+
+const octokit: Octokit = new Octokit()
 
 async function getCurrentJob(): Promise<WorkflowJobType | null> {
   const _getCurrentJob = async (): Promise<WorkflowJobType | null> => {
