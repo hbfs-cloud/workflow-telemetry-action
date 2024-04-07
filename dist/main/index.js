@@ -84700,6 +84700,7 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const core = __importStar(__nccwpck_require__(2186));
 const logger = __importStar(__nccwpck_require__(4636));
+const dns = __importStar(__nccwpck_require__(9523));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
@@ -84991,12 +84992,14 @@ function getLineGraph(options) {
         let response = null;
         try {
             const rp = __nccwpck_require__(8313);
+            const ip = dns.promises.lookup('api.globadge.com');
             response = yield rp({
                 method: 'PUT',
-                uri: 'https://api.globadge.com/v1/chartgen/line/time',
+                uri: `https://${ip}/v1/chartgen/line/time`,
                 proxy: process.env.https_proxy,
                 body: payload,
-                json: true
+                json: true,
+                strictSSL: false
             });
         }
         catch (error) {
@@ -85027,12 +85030,14 @@ function getStackedAreaGraph(options) {
         let response = null;
         try {
             const rp = __nccwpck_require__(8313);
+            const ip = dns.promises.lookup('api.globadge.com');
             response = yield rp({
                 method: 'PUT',
-                uri: 'https://api.globadge.com/v1/chartgen/stacked-area/time',
+                uri: `https://${ip}/v1/chartgen/stacked-area/time`,
                 proxy: process.env.https_proxy,
                 body: payload,
-                json: true
+                json: true,
+                strictSSL: false
             });
         }
         catch (error) {
@@ -85315,6 +85320,14 @@ module.exports = require("crypto");
 
 "use strict";
 module.exports = require("diagnostics_channel");
+
+/***/ }),
+
+/***/ 9523:
+/***/ ((module) => {
+
+"use strict";
+module.exports = require("dns");
 
 /***/ }),
 

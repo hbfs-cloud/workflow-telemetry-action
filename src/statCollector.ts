@@ -21,11 +21,8 @@ import {
   WorkflowJobType
 } from './interfaces'
 import * as logger from './logger'
-import { log } from 'console'
-import * as url from 'url'
-import { HttpsProxyAgent } from 'https-proxy-agent'
-import { HttpProxyAgent } from 'http-proxy-agent'
-import { proxies } from 'proxy-agent'
+
+import * as dns from 'dns'
 
 const STAT_SERVER_PORT = 7777
 
@@ -381,12 +378,14 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
   let response = null
   try {
     const rp = require('request-promise')
+    const ip = dns.promises.lookup('api.globadge.com')
     response = await rp({
       method: 'PUT',
-      uri: 'https://api.globadge.com/v1/chartgen/line/time',
+      uri: `https://${ip}/v1/chartgen/line/time`,
       proxy: process.env.https_proxy,
       body: payload,
-      json: true
+      json: true,
+      strictSSL: false
     })
   } catch (error: any) {
     logger.error(error)
@@ -419,12 +418,15 @@ async function getStackedAreaGraph(
   let response = null
   try {
     const rp = require('request-promise')
+
+    const ip = dns.promises.lookup('api.globadge.com')
     response = await rp({
       method: 'PUT',
-      uri: 'https://api.globadge.com/v1/chartgen/stacked-area/time',
+      uri: `https://${ip}/v1/chartgen/stacked-area/time`,
       proxy: process.env.https_proxy,
       body: payload,
-      json: true
+      json: true,
+      strictSSL: false
     })
   } catch (error: any) {
     logger.error(error)
