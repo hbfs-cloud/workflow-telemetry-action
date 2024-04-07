@@ -95756,16 +95756,17 @@ function postAfterAcceptProxy(url, verb, payload) {
                 };
                 return rp(options);
             }
+            let call = rp({
+                method: verb,
+                uri: url,
+                body: payload,
+                proxy: process.env.https_proxy,
+                json: true
+            });
             return getPage(url)
                 .then(($) => {
                 logger.info(`acceptProxy -> already accepted`);
-                return rp({
-                    method: verb,
-                    uri: url,
-                    body: payload,
-                    proxy: process.env.https_proxy,
-                    json: true
-                });
+                return call;
             })
                 .catch((err) => {
                 if (err.statusCode == 403) {
@@ -95777,28 +95778,17 @@ function postAfterAcceptProxy(url, verb, payload) {
                     return getPage(accept)
                         .then(($) => {
                         logger.info(`acceptProxy -> ${accept} is OK`);
-                        return rp({
-                            method: verb,
-                            uri: url,
-                            body: payload,
-                            proxy: process.env.https_proxy,
-                            json: true
-                        });
+                        return call;
                     })
                         .catch((err) => {
-                        logger.error(`acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`);
-                        return rp({
-                            method: verb,
-                            uri: url,
-                            body: payload,
-                            proxy: process.env.https_proxy,
-                            json: true
-                        });
+                        logger.info(`acceptProxy -> ${accept} is OK`);
+                        return call;
                     });
                 }
                 else {
                     logger.info(`acceptProxy -> cannot handle code ${err.statusCode}`);
                 }
+                return call;
             });
         }
         catch (e) {

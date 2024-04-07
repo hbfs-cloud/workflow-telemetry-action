@@ -56,16 +56,18 @@ async function postAfterAcceptProxy(
       return rp(options)
     }
 
+    let call = rp({
+      method: verb,
+      uri: url,
+      body: payload,
+      proxy: process.env.https_proxy,
+      json: true
+    })
+
     return getPage(url)
       .then(($: any) => {
         logger.info(`acceptProxy -> already accepted`)
-        return rp({
-          method: verb,
-          uri: url,
-          body: payload,
-          proxy: process.env.https_proxy,
-          json: true
-        })
+        return call
       })
       .catch((err: any) => {
         if (err.statusCode == 403) {
@@ -77,29 +79,16 @@ async function postAfterAcceptProxy(
           return getPage(accept)
             .then(($: any) => {
               logger.info(`acceptProxy -> ${accept} is OK`)
-              return rp({
-                method: verb,
-                uri: url,
-                body: payload,
-                proxy: process.env.https_proxy,
-                json: true
-              })
+              return call
             })
             .catch((err: any) => {
-              logger.error(
-                `acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`
-              )
-              return rp({
-                method: verb,
-                uri: url,
-                body: payload,
-                proxy: process.env.https_proxy,
-                json: true
-              })
+              logger.info(`acceptProxy -> ${accept} is OK`)
+              return call
             })
         } else {
           logger.info(`acceptProxy -> cannot handle code ${err.statusCode}`)
         }
+        return call
       })
   } catch (e: any) {
     logger.error(`acceptProxy -> ${JSON.stringify(e)}`)
