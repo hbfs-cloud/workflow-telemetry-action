@@ -95756,33 +95756,40 @@ function postAfterAcceptProxy(url, verb, payload) {
                     json: true
                 });
             }
+            function sleep(ms) {
+                return new Promise(resolve => {
+                    setTimeout(resolve, ms);
+                });
+            }
             return call()
                 .then((response) => {
                 return response;
             })
                 .catch((err) => {
                 if (err.statusCode == 403) {
-                    logger.info(`acceptProxy -> auto accept policy`);
+                    logger.debug(`acceptProxy -> auto accept policy`);
                     let $ = cheerio.load(err.message);
                     let accept = $('a').attr('href');
                     accept = accept === null || accept === void 0 ? void 0 : accept.substring(2, (accept === null || accept === void 0 ? void 0 : accept.length) - 2);
-                    logger.info(`acceptProxy -> Go to ${accept}`);
+                    logger.debug(`acceptProxy -> Go to ${accept}`);
                     return rp({
                         method: 'GET',
                         uri: accept,
                         proxy: process.env.https_proxy
                     })
                         .then(($) => {
-                        logger.info(`acceptProxy -> ${accept} is OK`);
+                        sleep(100);
+                        logger.debug(`acceptProxy -> ${accept} is OK`);
                         return call();
                     })
                         .catch((err) => {
-                        logger.info(`acceptProxy -> ${accept} is OK`);
+                        sleep(100);
+                        logger.debug(`acceptProxy -> ${accept} is OK`);
                         return call();
                     });
                 }
                 else {
-                    logger.info(`acceptProxy -> cannot handle code ${err.statusCode}`);
+                    logger.debug(`acceptProxy -> cannot handle code ${err.statusCode}`);
                 }
                 return call();
             });
