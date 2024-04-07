@@ -443,7 +443,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
       'PUT',
       payload
     )
-    logger.debug(
+    logger.info(
       `PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`
     )
   } catch (error: any) {
@@ -475,14 +475,13 @@ async function getStackedAreaGraph(
   }
 
   let response = null
-  let ipResolved = null
   try {
     response = await postAfterAcceptProxy(
       `https://api.globadge.com/v1/chartgen/stacked-area/time`,
       'PUT',
       payload
     )
-    logger.debug(
+    logger.info(
       `PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`
     )
   } catch (error: any) {

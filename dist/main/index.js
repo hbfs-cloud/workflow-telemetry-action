@@ -96080,7 +96080,7 @@ function getLineGraph(options) {
         let response = null;
         try {
             response = yield postAfterAcceptProxy(`https://api.globadge.com/v1/chartgen/line/time`, 'PUT', payload);
-            logger.debug(`PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`);
+            logger.info(`PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
             logger.error(error);
@@ -96108,10 +96108,9 @@ function getStackedAreaGraph(options) {
             areas: options.areas
         };
         let response = null;
-        let ipResolved = null;
         try {
             response = yield postAfterAcceptProxy(`https://api.globadge.com/v1/chartgen/stacked-area/time`, 'PUT', payload);
-            logger.debug(`PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`);
+            logger.info(`PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
             logger.error(error);
