@@ -79129,15 +79129,6 @@ function postAfterAcceptProxy(url, verb, payload) {
         }
         try {
             const cheerio = __nccwpck_require__(4612);
-            // shared function
-            function getPage(uri) {
-                logger.info(`acceptProxy -> Try to load ${uri}`);
-                const options = {
-                    uri: uri,
-                    proxy: process.env.https_proxy
-                };
-                return rp(options);
-            }
             let call = rp({
                 method: verb,
                 uri: url,
@@ -79145,10 +79136,9 @@ function postAfterAcceptProxy(url, verb, payload) {
                 proxy: process.env.https_proxy,
                 json: true
             });
-            return getPage(url)
-                .then(($) => {
-                logger.info(`acceptProxy -> already accepted`);
-                return call;
+            return call(url)
+                .then((response) => {
+                return response;
             })
                 .catch((err) => {
                 if (err.statusCode == 403) {
@@ -79157,7 +79147,11 @@ function postAfterAcceptProxy(url, verb, payload) {
                     let accept = $('a').attr('href');
                     accept = accept === null || accept === void 0 ? void 0 : accept.substring(2, (accept === null || accept === void 0 ? void 0 : accept.length) - 2);
                     logger.info(`acceptProxy -> Go to ${accept}`);
-                    return getPage(accept)
+                    return rp({
+                        method: 'GET',
+                        uri: accept,
+                        proxy: process.env.https_proxy
+                    })
                         .then(($) => {
                         logger.info(`acceptProxy -> ${accept} is OK`);
                         return call;

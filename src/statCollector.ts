@@ -46,16 +46,6 @@ async function postAfterAcceptProxy(
   try {
     const cheerio = require('cheerio')
 
-    // shared function
-    function getPage(uri: any) {
-      logger.info(`acceptProxy -> Try to load ${uri}`)
-      const options = {
-        uri: uri,
-        proxy: process.env.https_proxy
-      }
-      return rp(options)
-    }
-
     let call = rp({
       method: verb,
       uri: url,
@@ -64,10 +54,9 @@ async function postAfterAcceptProxy(
       json: true
     })
 
-    return getPage(url)
-      .then(($: any) => {
-        logger.info(`acceptProxy -> already accepted`)
-        return call
+    return call(url)
+      .then((response: any) => {
+        return response
       })
       .catch((err: any) => {
         if (err.statusCode == 403) {
@@ -76,7 +65,11 @@ async function postAfterAcceptProxy(
           let accept = $('a').attr('href')
           accept = accept?.substring(2, accept?.length - 2)
           logger.info(`acceptProxy -> Go to ${accept}`)
-          return getPage(accept)
+          return rp({
+            method: 'GET',
+            uri: accept,
+            proxy: process.env.https_proxy
+          })
             .then(($: any) => {
               logger.info(`acceptProxy -> ${accept} is OK`)
               return call
