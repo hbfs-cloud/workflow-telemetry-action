@@ -79462,13 +79462,13 @@ function getLineGraph(options) {
         let response = null;
         try {
             response = yield postAfterAcceptProxy(`https://api.globadge.com/v1/chartgen/line/time`, 'PUT', payload);
-            logger.info(`PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`);
+            logger.debug(`PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
             logger.error(error);
             logger.error(`getLineGraph ${JSON.stringify(payload)}`);
         }
-        return response === null || response === void 0 ? void 0 : response.data;
+        return response;
     });
 }
 function getStackedAreaGraph(options) {
@@ -79492,13 +79492,13 @@ function getStackedAreaGraph(options) {
         let response = null;
         try {
             response = yield postAfterAcceptProxy(`https://api.globadge.com/v1/chartgen/stacked-area/time`, 'PUT', payload);
-            logger.info(`PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`);
+            logger.debug(`PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
             logger.error(error);
             logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`);
         }
-        return response === null || response === void 0 ? void 0 : response.data;
+        return response;
     });
 }
 ///////////////////////////

@@ -443,7 +443,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
       'PUT',
       payload
     )
-    logger.info(
+    logger.debug(
       `PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`
     )
   } catch (error: any) {
@@ -451,7 +451,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
     logger.error(`getLineGraph ${JSON.stringify(payload)}`)
   }
 
-  return response?.data
+  return response
 }
 
 async function getStackedAreaGraph(
@@ -481,14 +481,14 @@ async function getStackedAreaGraph(
       'PUT',
       payload
     )
-    logger.info(
+    logger.debug(
       `PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`
     )
   } catch (error: any) {
     logger.error(error)
     logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`)
   }
-  return response?.data
+  return response
 }
 
 ///////////////////////////
