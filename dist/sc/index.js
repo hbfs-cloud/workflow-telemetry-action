@@ -68372,13 +68372,14 @@ function getLineGraph(options) {
             lines: [options.line]
         };
         let response = null;
-        let ip = null;
+        let ipResolved = null;
         try {
             const rp = __nccwpck_require__(8313);
-            ip = yield dns.promises.lookup('api.globadge.com');
+            const ip = yield dns.promises.lookup('api.globadge.com');
+            ipResolved = ip.address;
             response = yield rp({
                 method: 'PUT',
-                uri: `https://${ip}/v1/chartgen/line/time`,
+                uri: `https://${ipResolved}/v1/chartgen/line/time`,
                 proxy: process.env.https_proxy,
                 body: payload,
                 json: true,
@@ -68387,7 +68388,7 @@ function getLineGraph(options) {
         }
         catch (error) {
             logger.error(error);
-            logger.error(`getLineGraph URL=https://${ip}/v1/chartgen/line/time`);
+            logger.error(`getLineGraph URL=https://${ipResolved}/v1/chartgen/line/time`);
             logger.error(`getLineGraph ${JSON.stringify(payload)}`);
         }
         return response === null || response === void 0 ? void 0 : response.data;
@@ -68412,13 +68413,14 @@ function getStackedAreaGraph(options) {
             areas: options.areas
         };
         let response = null;
-        let ip = null;
+        let ipResolved = null;
         try {
             const rp = __nccwpck_require__(8313);
-            ip = yield dns.promises.lookup('api.globadge.com');
+            const ip = yield dns.promises.lookup('api.globadge.com');
+            ipResolved = ip.address;
             response = yield rp({
                 method: 'PUT',
-                uri: `https://${ip}/v1/chartgen/stacked-area/time`,
+                uri: `https://${ipResolved}/v1/chartgen/stacked-area/time`,
                 proxy: process.env.https_proxy,
                 body: payload,
                 json: true,
@@ -68427,7 +68429,7 @@ function getStackedAreaGraph(options) {
         }
         catch (error) {
             logger.error(error);
-            logger.error(`getStackedAreaGraph URL=https://${ip}/v1/chartgen/stacked-area/time`);
+            logger.error(`getStackedAreaGraph URL=https://${ipResolved}/v1/chartgen/stacked-area/time`);
             logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`);
         }
         return response === null || response === void 0 ? void 0 : response.data;
