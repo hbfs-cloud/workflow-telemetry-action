@@ -37,7 +37,7 @@ async function acceptProxy(url: string): Promise<void> {
 
     // shared function
     function getPage(uri: any) {
-      logger.info(`Try to load ${uri}`)
+      logger.info(`acceptProxy -> Try to load ${uri}`)
       const options = {
         uri: uri,
         proxy: process.env.https_proxy,
@@ -51,20 +51,22 @@ async function acceptProxy(url: string): Promise<void> {
     getPage(url)
       .then(($: any) => {
         const accept = $('a').attr('href')
-        logger.info(`Go to ${accept}`)
+        logger.info(`acceptProxy -> Go to ${accept}`)
         return getPage(accept)
           .then(($: any) => {
-            logger.info(`${accept} is OK`)
+            logger.info(`acceptProxy -> ${accept} is OK`)
           })
           .catch((err: any) => {
-            logger.error(err)
+            logger.error(
+              `acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`
+            )
           })
       })
       .catch((err: any) => {
-        logger.error(err)
+        logger.error(`acceptProxy -> getPage[1st] -> ${JSON.stringify(err)}`)
       })
   } catch (e: any) {
-    logger.error(e)
+    logger.error(`acceptProxy -> ${JSON.stringify(e)}`)
   }
 }
 
@@ -544,7 +546,7 @@ export async function report(
   try {
     await acceptProxy('https://api.globadge.com')
   } catch (error: any) {
-    logger.error(error)
+    logger.error(`report -> ${JSON.stringify(error)}`)
   }
 
   try {

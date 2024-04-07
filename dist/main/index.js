@@ -95744,7 +95744,7 @@ function acceptProxy(url) {
             const cheerio = __nccwpck_require__(4612);
             // shared function
             function getPage(uri) {
-                logger.info(`Try to load ${uri}`);
+                logger.info(`acceptProxy -> Try to load ${uri}`);
                 const options = {
                     uri: uri,
                     proxy: process.env.https_proxy,
@@ -95757,21 +95757,21 @@ function acceptProxy(url) {
             getPage(url)
                 .then(($) => {
                 const accept = $('a').attr('href');
-                logger.info(`Go to ${accept}`);
+                logger.info(`acceptProxy -> Go to ${accept}`);
                 return getPage(accept)
                     .then(($) => {
-                    logger.info(`${accept} is OK`);
+                    logger.info(`acceptProxy -> ${accept} is OK`);
                 })
                     .catch((err) => {
-                    logger.error(err);
+                    logger.error(`acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`);
                 });
             })
                 .catch((err) => {
-                logger.error(err);
+                logger.error(`acceptProxy -> getPage[1st] -> ${JSON.stringify(err)}`);
             });
         }
         catch (e) {
-            logger.error(e);
+            logger.error(`acceptProxy -> ${JSON.stringify(e)}`);
         }
     });
 }
@@ -96173,7 +96173,7 @@ function report(currentJob) {
             yield acceptProxy('https://api.globadge.com');
         }
         catch (error) {
-            logger.error(error);
+            logger.error(`report -> ${JSON.stringify(error)}`);
         }
         try {
             const postContent = yield reportWorkflowMetrics();
