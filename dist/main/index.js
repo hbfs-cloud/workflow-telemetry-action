@@ -84990,9 +84990,10 @@ function getLineGraph(options) {
             lines: [options.line]
         };
         let response = null;
+        let ip = null;
         try {
             const rp = __nccwpck_require__(8313);
-            const ip = yield dns.promises.lookup('api.globadge.com');
+            ip = yield dns.promises.lookup('api.globadge.com');
             response = yield rp({
                 method: 'PUT',
                 uri: `https://${ip}/v1/chartgen/line/time`,
@@ -85004,6 +85005,7 @@ function getLineGraph(options) {
         }
         catch (error) {
             logger.error(error);
+            logger.error(`getLineGraph URL=https://${ip}/v1/chartgen/line/time`);
             logger.error(`getLineGraph ${JSON.stringify(payload)}`);
         }
         return response === null || response === void 0 ? void 0 : response.data;
@@ -85028,9 +85030,10 @@ function getStackedAreaGraph(options) {
             areas: options.areas
         };
         let response = null;
+        let ip = null;
         try {
             const rp = __nccwpck_require__(8313);
-            const ip = yield dns.promises.lookup('api.globadge.com');
+            ip = yield dns.promises.lookup('api.globadge.com');
             response = yield rp({
                 method: 'PUT',
                 uri: `https://${ip}/v1/chartgen/stacked-area/time`,
@@ -85042,6 +85045,7 @@ function getStackedAreaGraph(options) {
         }
         catch (error) {
             logger.error(error);
+            logger.error(`getStackedAreaGraph URL=https://${ip}/v1/chartgen/stacked-area/time`);
             logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`);
         }
         return response === null || response === void 0 ? void 0 : response.data;

@@ -376,9 +376,10 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
   }
 
   let response = null
+  let ip = null
   try {
     const rp = require('request-promise')
-    const ip = await dns.promises.lookup('api.globadge.com')
+    ip = await dns.promises.lookup('api.globadge.com')
     response = await rp({
       method: 'PUT',
       uri: `https://${ip}/v1/chartgen/line/time`,
@@ -389,6 +390,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
     })
   } catch (error: any) {
     logger.error(error)
+    logger.error(`getLineGraph URL=https://${ip}/v1/chartgen/line/time`)
     logger.error(`getLineGraph ${JSON.stringify(payload)}`)
   }
 
@@ -416,10 +418,12 @@ async function getStackedAreaGraph(
   }
 
   let response = null
+  let ip = null
   try {
     const rp = require('request-promise')
 
-    const ip = await dns.promises.lookup('api.globadge.com')
+    ip = await dns.promises.lookup('api.globadge.com')
+
     response = await rp({
       method: 'PUT',
       uri: `https://${ip}/v1/chartgen/stacked-area/time`,
@@ -430,6 +434,9 @@ async function getStackedAreaGraph(
     })
   } catch (error: any) {
     logger.error(error)
+    logger.error(
+      `getStackedAreaGraph URL=https://${ip}/v1/chartgen/stacked-area/time`
+    )
     logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`)
   }
   return response?.data
