@@ -376,24 +376,20 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
   }
 
   let response = null
-  let ipResolved = null
   try {
     const rp = require('request-promise')
-    const ip = await dns.promises.lookup('api.globadge.com')
-    ipResolved = ip.address
     response = await rp({
       method: 'PUT',
-      uri: `https://${ipResolved}/v1/chartgen/line/time`,
+      uri: `https://api.globadge.com/v1/chartgen/line/time`,
       proxy: process.env.https_proxy,
       body: payload,
-      json: true,
-      strictSSL: false,
-      rejectUnauthorized: false,
-      insecure: true
+      json: true
     })
+    logger.debug(
+      `PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`
+    )
   } catch (error: any) {
     logger.error(error)
-    logger.error(`getLineGraph URL=https://${ipResolved}/v1/chartgen/line/time`)
     logger.error(`getLineGraph ${JSON.stringify(payload)}`)
   }
 
@@ -424,25 +420,18 @@ async function getStackedAreaGraph(
   let ipResolved = null
   try {
     const rp = require('request-promise')
-
-    const ip = await dns.promises.lookup('api.globadge.com')
-    ipResolved = ip.address
-
     response = await rp({
       method: 'PUT',
-      uri: `https://${ipResolved}/v1/chartgen/stacked-area/time`,
+      uri: `https://api.globadge.com/v1/chartgen/stacked-area/time`,
       proxy: process.env.https_proxy,
       body: payload,
-      json: true,
-      strictSSL: false,
-      rejectUnauthorized: false,
-      insecure: true
+      json: true
     })
+    logger.debug(
+      `PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`
+    )
   } catch (error: any) {
     logger.error(error)
-    logger.error(
-      `getStackedAreaGraph URL=https://${ipResolved}/v1/chartgen/stacked-area/time`
-    )
     logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`)
   }
   return response?.data

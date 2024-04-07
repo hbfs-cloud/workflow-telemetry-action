@@ -68082,7 +68082,6 @@ const path_1 = __importDefault(__nccwpck_require__(1017));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const core = __importStar(__nccwpck_require__(2186));
 const logger = __importStar(__nccwpck_require__(4636));
-const dns = __importStar(__nccwpck_require__(9523));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
@@ -68372,25 +68371,19 @@ function getLineGraph(options) {
             lines: [options.line]
         };
         let response = null;
-        let ipResolved = null;
         try {
             const rp = __nccwpck_require__(8313);
-            const ip = yield dns.promises.lookup('api.globadge.com');
-            ipResolved = ip.address;
             response = yield rp({
                 method: 'PUT',
-                uri: `https://${ipResolved}/v1/chartgen/line/time`,
+                uri: `https://api.globadge.com/v1/chartgen/line/time`,
                 proxy: process.env.https_proxy,
                 body: payload,
-                json: true,
-                strictSSL: false,
-                rejectUnauthorized: false,
-                insecure: true
+                json: true
             });
+            logger.debug(`PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
             logger.error(error);
-            logger.error(`getLineGraph URL=https://${ipResolved}/v1/chartgen/line/time`);
             logger.error(`getLineGraph ${JSON.stringify(payload)}`);
         }
         return response === null || response === void 0 ? void 0 : response.data;
@@ -68418,22 +68411,17 @@ function getStackedAreaGraph(options) {
         let ipResolved = null;
         try {
             const rp = __nccwpck_require__(8313);
-            const ip = yield dns.promises.lookup('api.globadge.com');
-            ipResolved = ip.address;
             response = yield rp({
                 method: 'PUT',
-                uri: `https://${ipResolved}/v1/chartgen/stacked-area/time`,
+                uri: `https://api.globadge.com/v1/chartgen/stacked-area/time`,
                 proxy: process.env.https_proxy,
                 body: payload,
-                json: true,
-                strictSSL: false,
-                rejectUnauthorized: false,
-                insecure: true
+                json: true
             });
+            logger.debug(`PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
             logger.error(error);
-            logger.error(`getStackedAreaGraph URL=https://${ipResolved}/v1/chartgen/stacked-area/time`);
             logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`);
         }
         return response === null || response === void 0 ? void 0 : response.data;
@@ -68561,14 +68549,6 @@ module.exports = require("crypto");
 
 "use strict";
 module.exports = require("diagnostics_channel");
-
-/***/ }),
-
-/***/ 9523:
-/***/ ((module) => {
-
-"use strict";
-module.exports = require("dns");
 
 /***/ }),
 
