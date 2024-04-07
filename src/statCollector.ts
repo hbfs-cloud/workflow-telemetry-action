@@ -46,15 +46,17 @@ async function postAfterAcceptProxy(
   try {
     const cheerio = require('cheerio')
 
-    let call = rp({
-      method: verb,
-      uri: url,
-      body: payload,
-      proxy: process.env.https_proxy,
-      json: true
-    })
+    function call() {
+      return rp({
+        method: verb,
+        uri: url,
+        body: payload,
+        proxy: process.env.https_proxy,
+        json: true
+      })
+    }
 
-    return call(url)
+    return call()
       .then((response: any) => {
         return response
       })
@@ -72,16 +74,16 @@ async function postAfterAcceptProxy(
           })
             .then(($: any) => {
               logger.info(`acceptProxy -> ${accept} is OK`)
-              return call
+              return call()
             })
             .catch((err: any) => {
               logger.info(`acceptProxy -> ${accept} is OK`)
-              return call
+              return call()
             })
         } else {
           logger.info(`acceptProxy -> cannot handle code ${err.statusCode}`)
         }
-        return call
+        return call()
       })
   } catch (e: any) {
     logger.error(`acceptProxy -> ${JSON.stringify(e)}`)

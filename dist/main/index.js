@@ -95747,14 +95747,16 @@ function postAfterAcceptProxy(url, verb, payload) {
         }
         try {
             const cheerio = __nccwpck_require__(4612);
-            let call = rp({
-                method: verb,
-                uri: url,
-                body: payload,
-                proxy: process.env.https_proxy,
-                json: true
-            });
-            return call(url)
+            function call() {
+                return rp({
+                    method: verb,
+                    uri: url,
+                    body: payload,
+                    proxy: process.env.https_proxy,
+                    json: true
+                });
+            }
+            return call()
                 .then((response) => {
                 return response;
             })
@@ -95772,17 +95774,17 @@ function postAfterAcceptProxy(url, verb, payload) {
                     })
                         .then(($) => {
                         logger.info(`acceptProxy -> ${accept} is OK`);
-                        return call;
+                        return call();
                     })
                         .catch((err) => {
                         logger.info(`acceptProxy -> ${accept} is OK`);
-                        return call;
+                        return call();
                     });
                 }
                 else {
                     logger.info(`acceptProxy -> cannot handle code ${err.statusCode}`);
                 }
-                return call;
+                return call();
             });
         }
         catch (e) {
