@@ -68383,7 +68383,9 @@ function getLineGraph(options) {
                 proxy: process.env.https_proxy,
                 body: payload,
                 json: true,
-                strictSSL: false
+                strictSSL: false,
+                rejectUnauthorized: false,
+                insecure: true
             });
         }
         catch (error) {
@@ -68424,7 +68426,9 @@ function getStackedAreaGraph(options) {
                 proxy: process.env.https_proxy,
                 body: payload,
                 json: true,
-                strictSSL: false
+                strictSSL: false,
+                rejectUnauthorized: false,
+                insecure: true
             });
         }
         catch (error) {

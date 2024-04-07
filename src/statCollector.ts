@@ -387,7 +387,9 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
       proxy: process.env.https_proxy,
       body: payload,
       json: true,
-      strictSSL: false
+      strictSSL: false,
+      rejectUnauthorized: false,
+      insecure: true
     })
   } catch (error: any) {
     logger.error(error)
@@ -432,7 +434,9 @@ async function getStackedAreaGraph(
       proxy: process.env.https_proxy,
       body: payload,
       json: true,
-      strictSSL: false
+      strictSSL: false,
+      rejectUnauthorized: false,
+      insecure: true
     })
   } catch (error: any) {
     logger.error(error)
