@@ -22,12 +22,51 @@ import {
 } from './interfaces'
 import * as logger from './logger'
 
-import * as dns from 'dns'
-
 const STAT_SERVER_PORT = 7777
 
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
+
+async function acceptProxy(url: string): Promise<void> {
+  if (!process.env.https_proxy) {
+    return
+  }
+  try {
+    const rp = require('request-promise')
+    const cheerio = require('cheerio')
+
+    // shared function
+    function getPage(uri: any) {
+      logger.info(`Try to load ${uri}`)
+      const options = {
+        uri: uri,
+        proxy: process.env.https_proxy,
+        transform: function (body: any) {
+          return cheerio.load(body)
+        }
+      }
+      return rp(options)
+    }
+
+    getPage(url)
+      .then(($: any) => {
+        const accept = $('a').attr('href')
+        logger.info(`Go to ${accept}`)
+        return getPage(accept)
+          .then(($: any) => {
+            logger.info(`${accept} is OK`)
+          })
+          .catch((err: any) => {
+            logger.error(err)
+          })
+      })
+      .catch((err: any) => {
+        logger.error(err)
+      })
+  } catch (e: any) {
+    logger.error(e)
+  }
+}
 
 async function triggerStatCollect(): Promise<void> {
   logger.debug('Triggering stat collect ...')
@@ -501,6 +540,12 @@ export async function report(
   currentJob: WorkflowJobType
 ): Promise<string | null> {
   logger.info(`Reporting stat collector result ...`)
+
+  try {
+    await acceptProxy('https://api.globadge.com')
+  } catch (error: any) {
+    logger.error(error)
+  }
 
   try {
     const postContent: string = await reportWorkflowMetrics()
