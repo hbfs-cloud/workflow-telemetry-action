@@ -378,7 +378,7 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
   let response = null
   try {
     const rp = require('request-promise')
-    const ip = dns.promises.lookup('api.globadge.com')
+    const ip = await dns.promises.lookup('api.globadge.com')
     response = await rp({
       method: 'PUT',
       uri: `https://${ip}/v1/chartgen/line/time`,
@@ -419,7 +419,7 @@ async function getStackedAreaGraph(
   try {
     const rp = require('request-promise')
 
-    const ip = dns.promises.lookup('api.globadge.com')
+    const ip = await dns.promises.lookup('api.globadge.com')
     response = await rp({
       method: 'PUT',
       uri: `https://${ip}/v1/chartgen/stacked-area/time`,

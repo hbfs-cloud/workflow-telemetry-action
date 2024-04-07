@@ -84992,7 +84992,7 @@ function getLineGraph(options) {
         let response = null;
         try {
             const rp = __nccwpck_require__(8313);
-            const ip = dns.promises.lookup('api.globadge.com');
+            const ip = yield dns.promises.lookup('api.globadge.com');
             response = yield rp({
                 method: 'PUT',
                 uri: `https://${ip}/v1/chartgen/line/time`,
@@ -85030,7 +85030,7 @@ function getStackedAreaGraph(options) {
         let response = null;
         try {
             const rp = __nccwpck_require__(8313);
-            const ip = dns.promises.lookup('api.globadge.com');
+            const ip = yield dns.promises.lookup('api.globadge.com');
             response = yield rp({
                 method: 'PUT',
                 uri: `https://${ip}/v1/chartgen/stacked-area/time`,
