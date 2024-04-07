@@ -79116,13 +79116,18 @@ const logger = __importStar(__nccwpck_require__(4636));
 const STAT_SERVER_PORT = 7777;
 const BLACK = '#000000';
 const WHITE = '#FFFFFF';
-function acceptProxy(url) {
+function postAfterAcceptProxy(url, verb, payload) {
     return __awaiter(this, void 0, void 0, function* () {
+        const rp = __nccwpck_require__(8313);
         if (!process.env.https_proxy) {
-            return;
+            return rp({
+                method: verb,
+                uri: url,
+                body: payload,
+                json: true
+            });
         }
         try {
-            const rp = __nccwpck_require__(8313);
             const cheerio = __nccwpck_require__(4612);
             // shared function
             function getPage(uri) {
@@ -79133,9 +79138,16 @@ function acceptProxy(url) {
                 };
                 return rp(options);
             }
-            getPage(url)
+            return getPage(url)
                 .then(($) => {
                 logger.info(`acceptProxy -> already accepted`);
+                return rp({
+                    method: verb,
+                    uri: url,
+                    body: payload,
+                    proxy: process.env.https_proxy,
+                    json: true
+                });
             })
                 .catch((err) => {
                 if (err.statusCode == 403) {
@@ -79147,6 +79159,13 @@ function acceptProxy(url) {
                     return getPage(accept)
                         .then(($) => {
                         logger.info(`acceptProxy -> ${accept} is OK`);
+                        return rp({
+                            method: verb,
+                            uri: url,
+                            body: payload,
+                            proxy: process.env.https_proxy,
+                            json: true
+                        });
                     })
                         .catch((err) => {
                         logger.error(`acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`);
@@ -79449,14 +79468,7 @@ function getLineGraph(options) {
         };
         let response = null;
         try {
-            const rp = __nccwpck_require__(8313);
-            response = yield rp({
-                method: 'PUT',
-                uri: `https://api.globadge.com/v1/chartgen/line/time`,
-                proxy: process.env.https_proxy,
-                body: payload,
-                json: true
-            });
+            response = yield postAfterAcceptProxy(`https://api.globadge.com/v1/chartgen/line/time`, 'PUT', payload);
             logger.debug(`PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
@@ -79487,14 +79499,7 @@ function getStackedAreaGraph(options) {
         let response = null;
         let ipResolved = null;
         try {
-            const rp = __nccwpck_require__(8313);
-            response = yield rp({
-                method: 'PUT',
-                uri: `https://api.globadge.com/v1/chartgen/stacked-area/time`,
-                proxy: process.env.https_proxy,
-                body: payload,
-                json: true
-            });
+            response = yield postAfterAcceptProxy(`https://api.globadge.com/v1/chartgen/stacked-area/time`, 'PUT', payload);
             logger.debug(`PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`);
         }
         catch (error) {
@@ -79556,12 +79561,6 @@ exports.finish = finish;
 function report(currentJob) {
     return __awaiter(this, void 0, void 0, function* () {
         logger.info(`Reporting stat collector result ...`);
-        try {
-            yield acceptProxy('https://api.globadge.com');
-        }
-        catch (error) {
-            logger.error(`report -> ${JSON.stringify(error)}`);
-        }
         try {
             const postContent = yield reportWorkflowMetrics();
             logger.info(`Reported stat collector result`);

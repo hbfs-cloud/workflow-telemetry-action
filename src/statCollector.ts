@@ -28,12 +28,22 @@ const STAT_SERVER_PORT = 7777
 const BLACK = '#000000'
 const WHITE = '#FFFFFF'
 
-async function acceptProxy(url: string): Promise<void> {
+async function postAfterAcceptProxy(
+  url: string,
+  verb: string,
+  payload: any
+): Promise<any> {
+  const rp = require('request-promise')
+
   if (!process.env.https_proxy) {
-    return
+    return rp({
+      method: verb,
+      uri: url,
+      body: payload,
+      json: true
+    })
   }
   try {
-    const rp = require('request-promise')
     const cheerio = require('cheerio')
 
     // shared function
@@ -46,9 +56,16 @@ async function acceptProxy(url: string): Promise<void> {
       return rp(options)
     }
 
-    getPage(url)
+    return getPage(url)
       .then(($: any) => {
         logger.info(`acceptProxy -> already accepted`)
+        return rp({
+          method: verb,
+          uri: url,
+          body: payload,
+          proxy: process.env.https_proxy,
+          json: true
+        })
       })
       .catch((err: any) => {
         if (err.statusCode == 403) {
@@ -60,6 +77,13 @@ async function acceptProxy(url: string): Promise<void> {
           return getPage(accept)
             .then(($: any) => {
               logger.info(`acceptProxy -> ${accept} is OK`)
+              return rp({
+                method: verb,
+                uri: url,
+                body: payload,
+                proxy: process.env.https_proxy,
+                json: true
+              })
             })
             .catch((err: any) => {
               logger.error(
@@ -423,14 +447,11 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
 
   let response = null
   try {
-    const rp = require('request-promise')
-    response = await rp({
-      method: 'PUT',
-      uri: `https://api.globadge.com/v1/chartgen/line/time`,
-      proxy: process.env.https_proxy,
-      body: payload,
-      json: true
-    })
+    response = await postAfterAcceptProxy(
+      `https://api.globadge.com/v1/chartgen/line/time`,
+      'PUT',
+      payload
+    )
     logger.debug(
       `PUT https://api.globadge.com/v1/chartgen/line/time response: ${JSON.stringify(response)}`
     )
@@ -465,14 +486,11 @@ async function getStackedAreaGraph(
   let response = null
   let ipResolved = null
   try {
-    const rp = require('request-promise')
-    response = await rp({
-      method: 'PUT',
-      uri: `https://api.globadge.com/v1/chartgen/stacked-area/time`,
-      proxy: process.env.https_proxy,
-      body: payload,
-      json: true
-    })
+    response = await postAfterAcceptProxy(
+      `https://api.globadge.com/v1/chartgen/stacked-area/time`,
+      'PUT',
+      payload
+    )
     logger.debug(
       `PUT https://api.globadge.com/v1/chartgen/stacked-area/time response: ${JSON.stringify(response)}`
     )
@@ -547,12 +565,6 @@ export async function report(
   currentJob: WorkflowJobType
 ): Promise<string | null> {
   logger.info(`Reporting stat collector result ...`)
-
-  try {
-    await acceptProxy('https://api.globadge.com')
-  } catch (error: any) {
-    logger.error(`report -> ${JSON.stringify(error)}`)
-  }
 
   try {
     const postContent: string = await reportWorkflowMetrics()
