@@ -95759,7 +95759,8 @@ function acceptProxy(url) {
                 if (err.statusCode == 403) {
                     logger.info(`acceptProxy -> auto accept policy`);
                     let $ = cheerio.load(err.message);
-                    const accept = $('a').attr('href');
+                    let accept = $('a').attr('href');
+                    accept = accept === null || accept === void 0 ? void 0 : accept.substring(4, (accept === null || accept === void 0 ? void 0 : accept.length) - 4);
                     logger.info(`acceptProxy -> Go to ${accept}`);
                     return getPage(accept)
                         .then(($) => {
