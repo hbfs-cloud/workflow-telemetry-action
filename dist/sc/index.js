@@ -79169,6 +79169,13 @@ function postAfterAcceptProxy(url, verb, payload) {
                     })
                         .catch((err) => {
                         logger.error(`acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`);
+                        return rp({
+                            method: verb,
+                            uri: url,
+                            body: payload,
+                            proxy: process.env.https_proxy,
+                            json: true
+                        });
                     });
                 }
                 else {
