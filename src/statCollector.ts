@@ -2,6 +2,7 @@ import { ChildProcess, spawn } from 'child_process'
 import path from 'path'
 import axios, { AxiosRequestConfig } from 'axios'
 import * as core from '@actions/core'
+
 import {
   CPUStats,
   DiskSizeStats,
@@ -24,6 +25,7 @@ import { log } from 'console'
 import * as url from 'url'
 import { HttpsProxyAgent } from 'https-proxy-agent'
 import { HttpProxyAgent } from 'http-proxy-agent'
+import { proxies } from 'proxy-agent'
 
 const STAT_SERVER_PORT = 7777
 
@@ -378,10 +380,14 @@ async function getLineGraph(options: LineGraphOptions): Promise<GraphResponse> {
 
   let response = null
   try {
-    response = await axios.put(
-      'https://api.globadge.com/v1/chartgen/line/time',
-      payload
-    )
+    const rp = require('request-promise')
+    response = await rp({
+      method: 'PUT',
+      uri: 'https://api.globadge.com/v1/chartgen/line/time',
+      proxy: process.env.https_proxy,
+      body: payload,
+      json: true
+    })
   } catch (error: any) {
     logger.error(error)
     logger.error(`getLineGraph ${JSON.stringify(payload)}`)
@@ -412,10 +418,14 @@ async function getStackedAreaGraph(
 
   let response = null
   try {
-    response = await axios.put(
-      'https://api.globadge.com/v1/chartgen/stacked-area/time',
-      payload
-    )
+    const rp = require('request-promise')
+    response = await rp({
+      method: 'PUT',
+      uri: 'https://api.globadge.com/v1/chartgen/stacked-area/time',
+      proxy: process.env.https_proxy,
+      body: payload,
+      json: true
+    })
   } catch (error: any) {
     logger.error(error)
     logger.error(`getStackedAreaGraph ${JSON.stringify(payload)}`)
