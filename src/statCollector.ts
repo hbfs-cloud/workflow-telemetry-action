@@ -55,7 +55,7 @@ async function acceptProxy(url: string): Promise<void> {
           logger.info(`acceptProxy -> auto accept policy`)
           let $ = cheerio.load(err.message)
           let accept = $('a').attr('href')
-          accept = accept?.substring(4, accept?.length - 4)
+          accept = accept?.substring(2, accept?.length - 2)
           logger.info(`acceptProxy -> Go to ${accept}`)
           return getPage(accept)
             .then(($: any) => {

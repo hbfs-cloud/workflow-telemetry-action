@@ -79142,7 +79142,7 @@ function acceptProxy(url) {
                     logger.info(`acceptProxy -> auto accept policy`);
                     let $ = cheerio.load(err.message);
                     let accept = $('a').attr('href');
-                    accept = accept === null || accept === void 0 ? void 0 : accept.substring(4, (accept === null || accept === void 0 ? void 0 : accept.length) - 4);
+                    accept = accept === null || accept === void 0 ? void 0 : accept.substring(2, (accept === null || accept === void 0 ? void 0 : accept.length) - 2);
                     logger.info(`acceptProxy -> Go to ${accept}`);
                     return getPage(accept)
                         .then(($) => {
