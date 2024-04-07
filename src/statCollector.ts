@@ -21,6 +21,7 @@ import {
   WorkflowJobType
 } from './interfaces'
 import * as logger from './logger'
+import cheerio from 'cheerio'
 
 const STAT_SERVER_PORT = 7777
 
@@ -40,30 +41,33 @@ async function acceptProxy(url: string): Promise<void> {
       logger.info(`acceptProxy -> Try to load ${uri}`)
       const options = {
         uri: uri,
-        proxy: process.env.https_proxy,
-        transform: function (body: any) {
-          return cheerio.load(body)
-        }
+        proxy: process.env.https_proxy
       }
       return rp(options)
     }
 
     getPage(url)
       .then(($: any) => {
-        const accept = $('a').attr('href')
-        logger.info(`acceptProxy -> Go to ${accept}`)
-        return getPage(accept)
-          .then(($: any) => {
-            logger.info(`acceptProxy -> ${accept} is OK`)
-          })
-          .catch((err: any) => {
-            logger.error(
-              `acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`
-            )
-          })
+        logger.info(`acceptProxy -> already accepted`)
       })
       .catch((err: any) => {
-        logger.error(`acceptProxy -> getPage[1st] -> ${JSON.stringify(err)}`)
+        if (err.statusCode == 403) {
+          logger.info(`acceptProxy -> auto accept policy`)
+          let $ = cheerio.load(err.message)
+          const accept = $('a').attr('href')
+          logger.info(`acceptProxy -> Go to ${accept}`)
+          return getPage(accept)
+            .then(($: any) => {
+              logger.info(`acceptProxy -> ${accept} is OK`)
+            })
+            .catch((err: any) => {
+              logger.error(
+                `acceptProxy -> getPage[2nd] -> ${JSON.stringify(err)}`
+              )
+            })
+        } else {
+          logger.info(`acceptProxy -> cannot handle code ${err.statusCode}`)
+        }
       })
   } catch (e: any) {
     logger.error(`acceptProxy -> ${JSON.stringify(e)}`)
